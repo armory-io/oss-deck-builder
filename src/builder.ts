@@ -1,6 +1,5 @@
 import * as core from '@actions/core'
 import {ExecOptions} from '@actions/exec'
-import * as fs from 'fs'
 import path from 'path'
 import {IModuleHandler} from './module'
 import {valid} from 'semver'
