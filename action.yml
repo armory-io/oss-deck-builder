@@ -1,0 +1,34 @@
+name: Deck Builder
+description: Spinnaker Deck Builder
+author: Armory
+inputs:
+  deck_path:
+    required: true
+    description: Local path to https://github.com/spinnaker/deck repository
+  version: 
+    required: true
+    description: Version (you likely should not set this - it should be provided by Astrolabe).
+  artifactory_url:
+    default: https://armory.jfrog.io/artifactory
+    description: Artifactory instance URL
+  artifactory_token:
+    required: true
+    description: Artifactory API Token
+  artifactory_resolve_repo:
+    default: npm-all
+    description: Artifactory NPM repository to use for resolving artifacts
+  artifactory_deploy_repo:
+    default: armory-npm-local
+    description: Artifactory NPM repository to use for deploying artifacts
+  build_name:
+    required: true
+    description: Artifactory build name (you likely should not set this - it should be provided by Astrolabe).
+  build_number:
+    required: true
+    description: Artifactory build number (you likely should not set this - it should be provided by Astrolabe).
+  build_url:
+    required: true
+    description: Artifactory build URL (you likely should not set this - it should be provided by Astrolabe).
+runs:
+  using: 'node12'
+  main: 'dist/index.js'
