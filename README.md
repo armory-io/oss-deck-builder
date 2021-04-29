@@ -1,6 +1,11 @@
 # Deck OSS Builder
 
-This repo contains a GitHub action for building Spinnaker OSS Deck.
+This repo contains a GitHub action for building Spinnaker OSS Deck. It steals
+from [oss-spinnaker-deck-bom](https://github.com/armory-io/oss-spinnaker-deck-bom) but
+
+1. Is a GitHub action
+1. Is meant to be used with Astrolabe to build per-commit NPM packages from
+   Deck
 
 ## Running locally
 
