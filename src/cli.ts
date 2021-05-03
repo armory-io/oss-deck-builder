@@ -5,6 +5,7 @@ import {defaultModuleHandler} from './module'
 import {exec} from '@actions/exec'
 import {parse} from 'yaml'
 import * as path from 'path'
+import camelcase from 'camelcase'
 
 interface Inputs {
   deckPath: string
@@ -35,7 +36,13 @@ const startProgram = (config: IActionConfig): Inputs => {
   })
   program.parse()
 
-  return program.opts() as Inputs
+  const inputs: any = {}
+  for (const [key, value] of Object.entries(program.opts())) {
+    console.log('key', key, 'value', value)
+    inputs[camelcase(key)] = value
+  }
+
+  return inputs as Inputs
 }
 
 interface IActionConfig {

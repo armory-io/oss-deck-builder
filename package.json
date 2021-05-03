@@ -25,7 +25,9 @@
   "dependencies": {
     "@actions/core": "^1.2.6",
     "@actions/exec": "^1.0.4",
+    "@types/camelcase": "^5.2.0",
     "@types/semver": "^7.3.5",
+    "camelcase": "^6.2.0",
     "commander": "^7.2.0",
     "semver": "^7.3.5",
     "yaml": "^1.10.2"
