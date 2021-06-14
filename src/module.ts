@@ -15,15 +15,15 @@ export const resolve = (dir: string): string[] => {
     .filter(dirEntry => dirEntry.isDirectory())
     .map(dirEntry => dirEntry.name)
     .filter(moduleCandidate => {
-      const doesWebpackConfigExist = fs.existsSync(
-        path.join(dir, moduleCandidate, 'webpack.config.js')
+      const doesPackageJsonExist = fs.existsSync(
+        path.join(dir, moduleCandidate, 'package.json')
       )
-      if (!doesWebpackConfigExist) {
+      if (!doesPackageJsonExist) {
         core.warning(
-          `Skipping module ${moduleCandidate}, no webpack.conf found`
+          `Skipping module ${moduleCandidate}, no package.json found`
         )
       }
-      return doesWebpackConfigExist
+      return doesPackageJsonExist
     })
 }
 
