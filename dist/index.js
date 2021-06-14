@@ -256,11 +256,11 @@ const resolve = (dir) => {
         .filter(dirEntry => dirEntry.isDirectory())
         .map(dirEntry => dirEntry.name)
         .filter(moduleCandidate => {
-        const doesWebpackConfigExist = fs.existsSync(path_1.default.join(dir, moduleCandidate, 'webpack.config.js'));
-        if (!doesWebpackConfigExist) {
-            core.warning(`Skipping module ${moduleCandidate}, no webpack.conf found`);
+        const doesPackageJsonExist = fs.existsSync(path_1.default.join(dir, moduleCandidate, 'package.json'));
+        if (!doesPackageJsonExist) {
+            core.warning(`Skipping module ${moduleCandidate}, no package.json found`);
         }
-        return doesWebpackConfigExist;
+        return doesPackageJsonExist;
     });
 };
 exports.resolve = resolve;
