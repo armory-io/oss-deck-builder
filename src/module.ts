@@ -3,17 +3,18 @@ import path from 'path'
 import * as fs from 'fs'
 
 export interface IModuleHandler {
-  resolve(dir: string): string[]
+  resolve(dir: string, excludedModules: string[]): string[]
   writeModuleVersion(dir: string, version: string): void
 }
 
-export const resolve = (dir: string): string[] => {
+export const resolve = (dir: string, excludedModules: string[]): string[] => {
   return fs
     .readdirSync(dir, {
       withFileTypes: true
     })
     .filter(dirEntry => dirEntry.isDirectory())
     .map(dirEntry => dirEntry.name)
+    .filter(moduleCandidate => !excludedModules.includes(moduleCandidate))
     .filter(moduleCandidate => {
       const doesPackageJsonExist = fs.existsSync(
         path.join(dir, moduleCandidate, 'package.json')
