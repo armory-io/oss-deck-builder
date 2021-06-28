@@ -61,7 +61,7 @@ class DeckBuilder {
         this.build = () => __awaiter(this, void 0, void 0, function* () {
             yield this.writeGlobalArtifactoryAuth(this.artifactoryUrl, this.artifactoryToken);
             core.info('Resolving modules...');
-            const modules = this.moduleHandler.resolve(path_1.default.join(this.deckPath, ROOT_MODULES_PATH));
+            const modules = this.moduleHandler.resolve(path_1.default.join(this.deckPath, ROOT_MODULES_PATH), ['app']);
             core.info(`Resolved ${modules.length} modules: ${modules.join(', ')}`);
             core.info("Running 'yarn'");
             yield this.yarnInstall(this.deckPath);
@@ -248,13 +248,14 @@ exports.defaultModuleHandler = exports.writeModuleVersion = exports.resolve = vo
 const core = __importStar(__webpack_require__(2186));
 const path_1 = __importDefault(__webpack_require__(5622));
 const fs = __importStar(__webpack_require__(5747));
-const resolve = (dir) => {
+const resolve = (dir, excludedModules) => {
     return fs
         .readdirSync(dir, {
         withFileTypes: true
     })
         .filter(dirEntry => dirEntry.isDirectory())
         .map(dirEntry => dirEntry.name)
+        .filter(moduleCandidate => !excludedModules.includes(moduleCandidate))
         .filter(moduleCandidate => {
         const doesPackageJsonExist = fs.existsSync(path_1.default.join(dir, moduleCandidate, 'package.json'));
         if (!doesPackageJsonExist) {
