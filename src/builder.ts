@@ -38,7 +38,8 @@ export class DeckBuilder {
 
     core.info('Resolving modules...')
     const modules = this.moduleHandler.resolve(
-      path.join(this.deckPath, ROOT_MODULES_PATH)
+      path.join(this.deckPath, ROOT_MODULES_PATH),
+      ['app']
     )
     core.info(`Resolved ${modules.length} modules: ${modules.join(', ')}`)
 

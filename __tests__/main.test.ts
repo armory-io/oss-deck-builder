@@ -16,7 +16,7 @@ test('runs commands to build deck', async () => {
 
   const builder = new DeckBuilder(
     {
-      resolve: (dir: string) => {
+      resolve: (dir: string, excludedModules: string[]) => {
         return ['core', 'amazon']
       },
       writeModuleVersion: (dir: string, v: string) => {
