@@ -1,4 +1,4 @@
-import {DeckBuilder} from '../src/builder'
+import {DeckBuilder, IExecutor} from '../src/builder'
 import {IModuleHandler} from '../src/module'
 import {ExecOptions} from '@actions/exec'
 import * as process from 'process'
@@ -21,7 +21,8 @@ test('runs commands to build deck', async () => {
       },
       writeModuleVersion: (dir: string, v: string) => {
         version = v
-      }
+      },
+      build: (executor: IExecutor, dir: string, modules: string[]) => Promise.resolve(),
     },
     {
       exec: async (cmd: string, args?: string[], opts?: ExecOptions) => {
@@ -45,10 +46,9 @@ test('runs commands to build deck', async () => {
   expect(commands).toEqual([
     {
       command:
-        'jfrog config add armory-artifactory-deck --artifactory-url=https://armory.jfrog.io/artifactory --access-token=<token> --interactive=false'
+        'jfrog config add armory-artifactory-deck --artifactory-url=https://armory.jfrog.io/artifactory --access-token=<token> --interactive=false',
     },
     {command: 'yarn --frozen-lockfile', dir: 'deck'},
-    {command: 'app/scripts/modules/build_modules.sh core amazon', dir: 'deck'},
     {
       command:
         'jfrog rt npmc --server-id-deploy=armory-artifactory-deck --server-id-resolve=armory-artifactory-deck --repo-resolve=npm-all --repo-deploy=armory-npm-local',
