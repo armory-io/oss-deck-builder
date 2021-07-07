@@ -95,7 +95,7 @@ class DeckBuilder {
             }
         });
         this.buildModules = (dir, modules) => __awaiter(this, void 0, void 0, function* () {
-            this.moduleHandler.build(this.executor, dir, modules);
+            yield this.moduleHandler.build(this.executor, dir, modules);
         });
         this.writeGlobalArtifactoryAuth = (artifactoryUrl, token) => __awaiter(this, void 0, void 0, function* () {
             let err = '';
@@ -284,12 +284,20 @@ const build = (executor, dir, modules) => __awaiter(void 0, void 0, void 0, func
     const packageJson = JSON.parse(fs.readFileSync(path_1.default.join(dir, 'package.json')).toString('utf-8'));
     if ((_a = packageJson === null || packageJson === void 0 ? void 0 : packageJson.scripts) === null || _a === void 0 ? void 0 : _a.buildModules) {
         core.info('Using buildModules yarn script...');
-        yield executor.exec('yarn', ['buildModules'], { cwd: dir });
+        yield executor.exec('yarn', ['buildModules'], {
+            cwd: dir,
+            listeners: {
+                stdline: line => core.info(`yarn buildModules: ${line}`)
+            }
+        });
     }
     else {
         core.info('Using legacy build_modules.sh script...');
         yield executor.exec('app/scripts/modules/build_modules.sh', modules, {
-            cwd: dir
+            cwd: dir,
+            listeners: {
+                stdline: line => core.info(`app/scripts/modules/build_modules.sh: ${line}`)
+            }
         });
     }
 });
