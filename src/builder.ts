@@ -89,7 +89,7 @@ export class DeckBuilder {
   }
 
   private buildModules = async (dir: string, modules: string[]) => {
-    this.moduleHandler.build(this.executor, dir, modules)
+    await this.moduleHandler.build(this.executor, dir, modules)
   }
 
   private writeGlobalArtifactoryAuth = async (

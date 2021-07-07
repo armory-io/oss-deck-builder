@@ -43,11 +43,19 @@ const build = async (executor: IExecutor, dir: string, modules: string[]) => {
   )
   if (packageJson?.scripts?.buildModules) {
     core.info('Using buildModules yarn script...')
-    await executor.exec('yarn', ['buildModules'], { cwd: dir })
+    await executor.exec('yarn', ['buildModules'], { 
+      cwd: dir, 
+      listeners: {
+        stdline: line => core.info(`yarn buildModules: ${line}`)
+      }
+    })
   } else {
     core.info('Using legacy build_modules.sh script...')
     await executor.exec('app/scripts/modules/build_modules.sh', modules, {
-      cwd: dir
+      cwd: dir,
+      listeners: {
+        stdline: line => core.info(`app/scripts/modules/build_modules.sh: ${line}`)
+      }
     })
   }
 }
