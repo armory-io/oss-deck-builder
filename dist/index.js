@@ -95,9 +95,7 @@ class DeckBuilder {
             }
         });
         this.buildModules = (dir, modules) => __awaiter(this, void 0, void 0, function* () {
-            yield this.executor.exec('app/scripts/modules/build_modules.sh', modules, {
-                cwd: dir
-            });
+            this.moduleHandler.build(this.executor, dir, modules);
         });
         this.writeGlobalArtifactoryAuth = (artifactoryUrl, token) => __awaiter(this, void 0, void 0, function* () {
             let err = '';
@@ -240,6 +238,15 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -272,9 +279,24 @@ const writeModuleVersion = (moduleDir, version) => {
     fs.writeFileSync(packagePath, JSON.stringify(packageJSON, null, 2), 'utf-8');
 };
 exports.writeModuleVersion = writeModuleVersion;
+const build = (executor, dir, modules) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    const packageJson = JSON.parse(fs.readFileSync(path_1.default.join(dir, 'package.json')).toString('utf-8'));
+    if ((_a = packageJson === null || packageJson === void 0 ? void 0 : packageJson.scripts) === null || _a === void 0 ? void 0 : _a.buildModules) {
+        core.info('Using buildModules yarn script...');
+        yield executor.exec('yarn', ['buildModules'], { cwd: dir });
+    }
+    else {
+        core.info('Using legacy build_modules.sh script...');
+        yield executor.exec('app/scripts/modules/build_modules.sh', modules, {
+            cwd: dir
+        });
+    }
+});
 exports.defaultModuleHandler = {
     resolve: exports.resolve,
-    writeModuleVersion: exports.writeModuleVersion
+    writeModuleVersion: exports.writeModuleVersion,
+    build
 };
 
 
