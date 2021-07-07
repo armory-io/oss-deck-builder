@@ -7,7 +7,7 @@ import {valid} from 'semver'
 const ROOT_MODULES_PATH = 'app/scripts/modules'
 const ARTIFACTORY_SERVER_ALIAS = 'armory-artifactory-deck'
 
-interface IExecutor {
+export interface IExecutor {
   exec(cmd: string, args?: string[], options?: ExecOptions): Promise<number>
 }
 
@@ -89,9 +89,7 @@ export class DeckBuilder {
   }
 
   private buildModules = async (dir: string, modules: string[]) => {
-    await this.executor.exec('app/scripts/modules/build_modules.sh', modules, {
-      cwd: dir
-    })
+    this.moduleHandler.build(this.executor, dir, modules)
   }
 
   private writeGlobalArtifactoryAuth = async (
