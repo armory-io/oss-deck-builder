@@ -41,12 +41,12 @@ const build = async (executor: IExecutor, dir: string, modules: string[]) => {
   const packageJson = JSON.parse(
     fs.readFileSync(path.join(dir, 'package.json')).toString('utf-8')
   )
-  if (packageJson?.scripts?.buildModules) {
+  if (packageJson?.scripts?.modules) {
     core.info('Using buildModules yarn script...')
-    await executor.exec('yarn', ['buildModules'], { 
+    await executor.exec('yarn', ['modules'], { 
       cwd: dir, 
       listeners: {
-        stdline: line => core.info(`yarn buildModules: ${line}`)
+        stdline: line => core.info(`yarn modules: ${line}`)
       }
     })
   } else {
