@@ -282,12 +282,12 @@ exports.writeModuleVersion = writeModuleVersion;
 const build = (executor, dir, modules) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const packageJson = JSON.parse(fs.readFileSync(path_1.default.join(dir, 'package.json')).toString('utf-8'));
-    if ((_a = packageJson === null || packageJson === void 0 ? void 0 : packageJson.scripts) === null || _a === void 0 ? void 0 : _a.buildModules) {
+    if ((_a = packageJson === null || packageJson === void 0 ? void 0 : packageJson.scripts) === null || _a === void 0 ? void 0 : _a.modules) {
         core.info('Using buildModules yarn script...');
-        yield executor.exec('yarn', ['buildModules'], {
+        yield executor.exec('yarn', ['modules'], {
             cwd: dir,
             listeners: {
-                stdline: line => core.info(`yarn buildModules: ${line}`)
+                stdline: line => core.info(`yarn modules: ${line}`)
             }
         });
     }
