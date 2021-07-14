@@ -4,8 +4,18 @@ import path from 'path'
 import {IModuleHandler} from './module'
 import {valid} from 'semver'
 
-const ROOT_MODULES_PATH = 'app/scripts/modules'
+const ROOT_MODULES_PATH = 'packages'
+const LEGACY_MODULES_PATH = 'app/scripts/modules'
 const ARTIFACTORY_SERVER_ALIAS = 'armory-artifactory-deck'
+const EXCLUDED_MODULES = [
+  'app',
+  'eslint-plugin',
+  'mocks',
+  'pluginsdk-peerdeps',
+  'pluginsdk',
+  'presentation',
+  'scripts'
+]
 
 export interface IExecutor {
   exec(cmd: string, args?: string[], options?: ExecOptions): Promise<number>
@@ -37,10 +47,11 @@ export class DeckBuilder {
     )
 
     core.info('Resolving modules...')
-    const modules = this.moduleHandler.resolve(
-      path.join(this.deckPath, ROOT_MODULES_PATH),
-      ['app']
-    )
+    const modules = this.resolveModules()
+    if (modules.length === 0) {
+      core.setFailed('Could not resolve Deck modules')
+      return
+    }
     core.info(`Resolved ${modules.length} modules: ${modules.join(', ')}`)
 
     core.info("Running 'yarn'")
@@ -73,6 +84,21 @@ export class DeckBuilder {
       this.buildUrl
     )
     core.info(`Done`)
+  }
+
+  private resolveModules = (): string[] => {
+    const modules = this.moduleHandler.resolve(
+      path.join(this.deckPath, ROOT_MODULES_PATH),
+      EXCLUDED_MODULES
+    )
+    if (modules.length !== 0) {
+      return modules
+    }
+
+    return this.moduleHandler.resolve(
+      path.join(this.deckPath, LEGACY_MODULES_PATH),
+      EXCLUDED_MODULES
+    )
   }
 
   private yarnInstall = async (dir: string) => {
