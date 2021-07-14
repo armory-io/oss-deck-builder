@@ -52,22 +52,22 @@ test('runs commands to build deck', async () => {
     {
       command:
         'jfrog rt npmc --server-id-deploy=armory-artifactory-deck --server-id-resolve=armory-artifactory-deck --repo-resolve=npm-all --repo-deploy=armory-npm-local',
-      dir: 'deck/app/scripts/modules/core'
+      dir: 'deck/packages/core'
     },
     {
       command:
         'jfrog rt npmp --build-name=<build-name> --build-number=<build-number>',
-      dir: 'deck/app/scripts/modules/core'
+      dir: 'deck/packages/core'
     },
     {
       command:
         'jfrog rt npmc --server-id-deploy=armory-artifactory-deck --server-id-resolve=armory-artifactory-deck --repo-resolve=npm-all --repo-deploy=armory-npm-local',
-      dir: 'deck/app/scripts/modules/amazon'
+      dir: 'deck/packages/amazon'
     },
     {
       command:
         'jfrog rt npmp --build-name=<build-name> --build-number=<build-number>',
-      dir: 'deck/app/scripts/modules/amazon'
+      dir: 'deck/packages/amazon'
     },
     {
       command: 'jfrog rt bag <build-name> <build-number>',
