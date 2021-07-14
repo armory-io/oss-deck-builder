@@ -43,8 +43,18 @@ exports.DeckBuilder = void 0;
 const core = __importStar(__webpack_require__(2186));
 const path_1 = __importDefault(__webpack_require__(5622));
 const semver_1 = __webpack_require__(1383);
-const ROOT_MODULES_PATH = 'app/scripts/modules';
+const ROOT_MODULES_PATH = 'packages';
+const LEGACY_MODULES_PATH = 'app/scripts/modules';
 const ARTIFACTORY_SERVER_ALIAS = 'armory-artifactory-deck';
+const EXCLUDED_MODULES = [
+    'app',
+    'eslint-plugin',
+    'mocks',
+    'pluginsdk-peerdeps',
+    'pluginsdk',
+    'presentation',
+    'scripts'
+];
 class DeckBuilder {
     constructor(moduleHandler, executor, deckPath, version, artifactoryUrl, artifactoryToken, artifactoryResolveRepo, artifactoryDeployRepo, buildName, buildNumber, buildUrl) {
         this.moduleHandler = moduleHandler;
@@ -61,7 +71,11 @@ class DeckBuilder {
         this.build = () => __awaiter(this, void 0, void 0, function* () {
             yield this.writeGlobalArtifactoryAuth(this.artifactoryUrl, this.artifactoryToken);
             core.info('Resolving modules...');
-            const modules = this.moduleHandler.resolve(path_1.default.join(this.deckPath, ROOT_MODULES_PATH), ['app']);
+            const modules = this.resolveModules();
+            if (modules.length === 0) {
+                core.setFailed('Could not resolve Deck modules');
+                return;
+            }
             core.info(`Resolved ${modules.length} modules: ${modules.join(', ')}`);
             core.info("Running 'yarn'");
             yield this.yarnInstall(this.deckPath);
@@ -81,6 +95,13 @@ class DeckBuilder {
             yield this.publishBuildInfo(this.deckPath, this.buildName, this.buildNumber, this.buildUrl);
             core.info(`Done`);
         });
+        this.resolveModules = () => {
+            const modules = this.moduleHandler.resolve(path_1.default.join(this.deckPath, ROOT_MODULES_PATH), EXCLUDED_MODULES);
+            if (modules.length !== 0) {
+                return modules;
+            }
+            return this.moduleHandler.resolve(path_1.default.join(this.deckPath, LEGACY_MODULES_PATH), EXCLUDED_MODULES);
+        };
         this.yarnInstall = (dir) => __awaiter(this, void 0, void 0, function* () {
             try {
                 yield this.executor.exec('yarn', ['--frozen-lockfile'], {
