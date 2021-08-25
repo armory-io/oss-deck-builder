@@ -22,7 +22,8 @@ test('runs commands to build deck', async () => {
       writeModuleVersion: (dir: string, v: string) => {
         version = v
       },
-      build: (executor: IExecutor, dir: string, modules: string[]) => Promise.resolve(),
+      build: (executor: IExecutor, dir: string, modules: string[]) =>
+        Promise.resolve()
     },
     {
       exec: async (cmd: string, args?: string[], opts?: ExecOptions) => {
@@ -46,7 +47,7 @@ test('runs commands to build deck', async () => {
   expect(commands).toEqual([
     {
       command:
-        'jfrog config add armory-artifactory-deck --artifactory-url=https://armory.jfrog.io/artifactory --access-token=<token> --interactive=false',
+        'jfrog config add armory-artifactory-deck --artifactory-url=https://armory.jfrog.io/artifactory --access-token=<token> --interactive=false'
     },
     {command: 'yarn --frozen-lockfile', dir: 'deck'},
     {

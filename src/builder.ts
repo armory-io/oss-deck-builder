@@ -47,7 +47,7 @@ export class DeckBuilder {
     )
 
     core.info('Resolving modules...')
-    const modules = this.resolveModules()
+    const [modules, modules_path] = this.resolveModules()
     if (modules.length === 0) {
       core.setFailed('Could not resolve Deck modules')
       return
@@ -64,7 +64,7 @@ export class DeckBuilder {
 
     for (const m of modules) {
       core.info(`Publishing ${m}...`)
-      const moduleDir = path.join(this.deckPath, ROOT_MODULES_PATH, m)
+      const moduleDir = path.join(this.deckPath, modules_path, m)
       await this.writeNPMAuth(
         moduleDir,
         this.artifactoryResolveRepo,
@@ -86,19 +86,22 @@ export class DeckBuilder {
     core.info(`Done`)
   }
 
-  private resolveModules = (): string[] => {
+  private resolveModules = (): [string[], string] => {
     const modules = this.moduleHandler.resolve(
       path.join(this.deckPath, ROOT_MODULES_PATH),
       EXCLUDED_MODULES
     )
     if (modules.length !== 0) {
-      return modules
+      return [modules, ROOT_MODULES_PATH]
     }
 
-    return this.moduleHandler.resolve(
-      path.join(this.deckPath, LEGACY_MODULES_PATH),
-      EXCLUDED_MODULES
-    )
+    return [
+      this.moduleHandler.resolve(
+        path.join(this.deckPath, LEGACY_MODULES_PATH),
+        EXCLUDED_MODULES
+      ),
+      LEGACY_MODULES_PATH
+    ]
   }
 
   private yarnInstall = async (dir: string) => {

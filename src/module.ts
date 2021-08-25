@@ -43,8 +43,8 @@ const build = async (executor: IExecutor, dir: string, modules: string[]) => {
   )
   if (packageJson?.scripts?.modules) {
     core.info('Using buildModules yarn script...')
-    await executor.exec('yarn', ['modules'], { 
-      cwd: dir, 
+    await executor.exec('yarn', ['modules'], {
+      cwd: dir,
       listeners: {
         stdline: line => core.info(`yarn modules: ${line}`)
       }
@@ -54,7 +54,8 @@ const build = async (executor: IExecutor, dir: string, modules: string[]) => {
     await executor.exec('app/scripts/modules/build_modules.sh', modules, {
       cwd: dir,
       listeners: {
-        stdline: line => core.info(`app/scripts/modules/build_modules.sh: ${line}`)
+        stdline: line =>
+          core.info(`app/scripts/modules/build_modules.sh: ${line}`)
       }
     })
   }
