@@ -13,7 +13,6 @@ const EXCLUDED_MODULES = [
   'mocks',
   'pluginsdk-peerdeps',
   'pluginsdk',
-  'presentation',
   'scripts'
 ]
 
