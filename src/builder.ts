@@ -20,6 +20,11 @@ export interface IExecutor {
   exec(cmd: string, args?: string[], options?: ExecOptions): Promise<number>
 }
 
+export interface IDeckModule {
+  moduleName: string
+  modulePath: string
+}
+
 export class DeckBuilder {
   constructor(
     private moduleHandler: IModuleHandler,
@@ -46,12 +51,12 @@ export class DeckBuilder {
     )
 
     core.info('Resolving modules...')
-    const [modules, modules_path] = this.resolveModules()
+    const modules = this.resolveModules()
     if (modules.length === 0) {
       core.setFailed('Could not resolve Deck modules')
       return
     }
-    core.info(`Resolved ${modules.length} modules: ${modules.join(', ')}`)
+    core.info(`Resolved ${modules.length} modules: ${modules.entries()}`)
 
     core.info("Running 'yarn'")
     await this.yarnInstall(this.deckPath)
@@ -62,8 +67,8 @@ export class DeckBuilder {
     core.info('Done building modules')
 
     for (const m of modules) {
-      core.info(`Publishing ${m}...`)
-      const moduleDir = path.join(this.deckPath, modules_path, m)
+      core.info(`Publishing ${m.moduleName} from ${m.modulePath}...`)
+      const moduleDir = path.join(this.deckPath, m.modulePath, m.moduleName)
       await this.writeNPMAuth(
         moduleDir,
         this.artifactoryResolveRepo,
@@ -85,22 +90,33 @@ export class DeckBuilder {
     core.info(`Done`)
   }
 
-  private resolveModules = (): [string[], string] => {
-    const modules = this.moduleHandler.resolve(
-      path.join(this.deckPath, ROOT_MODULES_PATH),
-      EXCLUDED_MODULES
-    )
-    if (modules.length !== 0) {
-      return [modules, ROOT_MODULES_PATH]
-    }
+  private resolveModules = (): IDeckModule[] => {
+    const rootModules = this.moduleHandler.resolve(
+        path.join(this.deckPath, ROOT_MODULES_PATH),
+        EXCLUDED_MODULES
+    ).map( moduleName => {
+      return {
+        moduleName,
+        modulePath: ROOT_MODULES_PATH
+      }
+    })
 
-    return [
-      this.moduleHandler.resolve(
+    const legacyModules = this.moduleHandler.resolve(
         path.join(this.deckPath, LEGACY_MODULES_PATH),
         EXCLUDED_MODULES
-      ),
-      LEGACY_MODULES_PATH
-    ]
+    ).filter( module => {
+      return rootModules.findIndex( m => {
+        return m.moduleName === module
+      }
+      ) < 0
+    }).map( moduleName => {
+      return {
+        moduleName,
+        modulePath: LEGACY_MODULES_PATH
+      }
+    })
+
+    return rootModules.concat(legacyModules)
   }
 
   private yarnInstall = async (dir: string) => {
@@ -116,8 +132,9 @@ export class DeckBuilder {
     }
   }
 
-  private buildModules = async (dir: string, modules: string[]) => {
-    await this.moduleHandler.build(this.executor, dir, modules)
+  private buildModules = async (dir: string, modules: IDeckModule[]) => {
+    const moduleNames = modules.map(m => {return m.moduleName})
+    await this.moduleHandler.build(this.executor, dir, moduleNames)
   }
 
   private writeGlobalArtifactoryAuth = async (
