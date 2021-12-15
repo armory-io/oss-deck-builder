@@ -101,6 +101,10 @@ export class DeckBuilder {
       }
     })
 
+    if (!this.version.includes("release-2.26.x") && !this.version.includes("release-2.26.x")) {
+      return rootModules
+    }
+
     const legacyModules = this.moduleHandler.resolve(
         path.join(this.deckPath, LEGACY_MODULES_PATH),
         EXCLUDED_MODULES
