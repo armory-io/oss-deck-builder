@@ -91,8 +91,10 @@ export class DeckBuilder {
   }
 
   private resolveModules = (): IDeckModule[] => {
+    const rootPath = path.join(this.deckPath, ROOT_MODULES_PATH)
+    core.info('Resolving Root modules in path: ' +rootPath)
     const rootModules = this.moduleHandler.resolve(
-        path.join(this.deckPath, ROOT_MODULES_PATH),
+        rootPath,
         EXCLUDED_MODULES
     ).map( moduleName => {
       return {
@@ -101,12 +103,14 @@ export class DeckBuilder {
       }
     })
 
-    if (!this.version.includes("release-2.26.x") && !this.version.includes("release-2.26.x")) {
+    if (!this.version.includes("release-2.26.x") && !this.version.includes("release-2.25.x")) {
       return rootModules
     }
 
+    const legacyPath = path.join(this.deckPath, LEGACY_MODULES_PATH)
+    core.info('Resolving Legacy modules in path: ' + legacyPath)
     const legacyModules = this.moduleHandler.resolve(
-        path.join(this.deckPath, LEGACY_MODULES_PATH),
+        legacyPath,
         EXCLUDED_MODULES
     ).filter( module => {
       return rootModules.findIndex( m => {
